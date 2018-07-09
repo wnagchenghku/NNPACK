@@ -438,6 +438,7 @@ def main(args):
             "log": build.target.is_android}):
 
         build.benchmark("convolution-inference-bench", build.cxx("convolution-inference.cc"))
+        build.benchmark("convolution-inference-bench-edge", build.cxx("convolution-inference-edge.cc"))
         build.benchmark("sgemm-bench", build.cxx("sgemm.cc"))
         build.benchmark("sxgemm-bench", build.cxx("sxgemm.cc"))
         build.benchmark("hxgemm-bench", build.cxx("hxgemm.cc"))
