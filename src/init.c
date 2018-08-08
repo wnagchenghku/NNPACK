@@ -29,7 +29,7 @@
 #include <nnpack/softmax.h>
 
 struct hardware_info nnp_hwinfo = { };
-static pthread_once_t hwinfo_init_control = PTHREAD_ONCE_INIT;
+//static pthread_once_t hwinfo_init_control = PTHREAD_ONCE_INIT;
 
 
 #if (defined(__i386__) || defined(__x86_64__)) && !defined(__ANDROID__)
@@ -731,7 +731,8 @@ static void init_hwinfo(void) {
 }
 
 enum nnp_status nnp_initialize(void) {
-	pthread_once(&hwinfo_init_control, &init_hwinfo);
+	//pthread_once(&hwinfo_init_control, &init_hwinfo);
+	init_hwinfo();
 	if (nnp_hwinfo.supported) {
 		return nnp_status_success;
 	} else {
