@@ -1,3 +1,5 @@
 cmake .. -DNNPACK_LIBRARY_TYPE="shared" -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DNNPACK_BACKEND="scalar" -DNNPACK_INFERENCE_ONLY=ON
+
 make VERBOSE=1
 
+/usr/bin/cc  -fno-stack-protector -fPIC -nostdlib -shared -Wl,-soname,libnnpack.so -o libnnpack.so CMakeFiles/nnpack.dir/src/init.c.o CMakeFiles/nnpack.dir/src/convolution-inference.c.o CMakeFiles/nnpack.dir/src/fully-connected-inference.c.o CMakeFiles/nnpack.dir/src/scalar/2d-fourier-8x8.c.o CMakeFiles/nnpack.dir/src/scalar/2d-fourier-16x16.c.o CMakeFiles/nnpack.dir/src/scalar/2d-winograd-8x8-3x3.c.o CMakeFiles/nnpack.dir/src/scalar/blas/s2gemm.c.o CMakeFiles/nnpack.dir/src/scalar/blas/cgemm-conjb.c.o CMakeFiles/nnpack.dir/src/scalar/blas/conv1x1.c.o CMakeFiles/nnpack.dir/src/scalar/blas/sgemm.c.o CMakeFiles/nnpack.dir/src/scalar/relu.c.o CMakeFiles/nnpack.dir/src/scalar/softmax.c.o CMakeFiles/nnpack.dir/src/scalar/blas/sdotxf.c.o CMakeFiles/nnpack.dir/src/scalar/blas/shdotxf.c.o deps/pthreadpool/libpthreadpool.a
