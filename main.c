@@ -1,83 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <malloc.h> /* memalign */
 #include <string.h>
 #include <nnpack.h>
 
-#define bit_OSXSAVE (1 << 27)
-
-#define __cpuid_mini(level, a, b, c, d)			\
-  __asm__ ("xchg{l}\t{%%}ebx, %1\n\t"			\
-	   "cpuid\n\t"					\
-	   "xchg{l}\t{%%}ebx, %1\n\t"			\
-	   : "=a" (a), "=r" (b), "=c" (c), "=d" (d)	\
-	   : "0" (level))
-
-#define __cpuid_count_mini(level, count, a, b, c, d)		\
-  __asm__ ("xchg{l}\t{%%}ebx, %1\n\t"			\
-	   "cpuid\n\t"					\
-	   "xchg{l}\t{%%}ebx, %1\n\t"			\
-	   : "=a" (a), "=r" (b), "=c" (c), "=d" (d)	\
-	   : "0" (level), "2" (count))
-
-
-static __inline unsigned int
-__get_cpuid_max_mini (unsigned int __ext, unsigned int *__sig)
-{
-  unsigned int __eax, __ebx, __ecx, __edx;
-
-  /* Host supports cpuid.  Return highest supported cpuid input value.  */
-  __cpuid_mini (__ext, __eax, __ebx, __ecx, __edx);
-
-  if (__sig)
-    *__sig = __ebx;
-
-  return __eax;
-}
-
-struct cpu_info_test {
-	uint32_t eax;
-	uint32_t ebx;
-	uint32_t ecx;
-	uint32_t edx;
-};
-
-static inline uint64_t xgetbv_test(uint32_t ext_ctrl_reg) {
-			uint32_t lo, hi;
-			asm(".byte 0x0F, 0x01, 0xD0" : "=a" (lo), "=d" (hi) : "c" (ext_ctrl_reg));
-			return (((uint64_t) hi) << 32) | (uint64_t) lo;
-}
-
-void init_x86_hwinfo_test(void) {
-	const uint32_t max_base_info = __get_cpuid_max_mini(0, NULL);
-	const uint32_t max_extended_info = __get_cpuid_max_mini(0x80000000, NULL);
-
-	printf("mini-os supports __get_cpuid_max\n");
-
-	if (max_base_info >= 1) {
-		struct cpu_info_test basic_info;
-		__cpuid_mini(1, basic_info.eax, basic_info.ebx, basic_info.ecx, basic_info.edx);
-
-		printf("mini-os supports __cpuid\n");
-		/* OSXSAVE: ecx[bit 27] in basic info */
-		const bool osxsave = !!(basic_info.ecx & bit_OSXSAVE);
-		/* Check that AVX[bit 2] and SSE[bit 1] registers are preserved by OS */
-		const bool ymm_regs = (osxsave ? ((xgetbv_test(0) & 0b110ul) == 0b110ul) : false);
-
-		printf("mini-os supports xgetbv\n");
-
-		struct cpu_info_test structured_info = { 0 };
-		if (max_base_info >= 7) {
-			__cpuid_count_mini(7, 0, structured_info.eax, structured_info.ebx, structured_info.ecx, structured_info.edx);
-		}
-		printf("mini-os supports __cpuid_count\n");
-	}
-}
-
 int main(int argc, char *argv[])
 {
-	init_x86_hwinfo_test();
-	printf("pass x86_hwinfo test\n");
-
 	enum nnp_status init_status = nnp_initialize();
 	if (init_status != nnp_status_success) {
 		fprintf(stderr, "NNPACK initialization failed: error code %d\n", init_status);
