@@ -3,16 +3,50 @@
 #include <string.h>
 #include <nnpack.h>
 
+struct cpu_info_test {
+	uint32_t eax;
+	uint32_t ebx;
+	uint32_t ecx;
+	uint32_t edx;
+};
+
+static inline uint64_t xgetbv_test(uint32_t ext_ctrl_reg) {
+			uint32_t lo, hi;
+			asm(".byte 0x0F, 0x01, 0xD0" : "=a" (lo), "=d" (hi) : "c" (ext_ctrl_reg));
+			return (((uint64_t) hi) << 32) | (uint64_t) lo;
+}
+
+init_x86_hwinfo_test(){
+	const uint32_t max_base_info = __get_cpuid_max(0, NULL);
+	const uint32_t max_extended_info = __get_cpuid_max(0x80000000, NULL);
+
+	printf("mini-os supports __get_cpuid_max\n");
+
+	if (max_base_info >= 1) {
+		struct cpu_info_test basic_info;
+		__cpuid(1, basic_info.eax, basic_info.ebx, basic_info.ecx, basic_info.edx);
+
+		printf("mini-os supports __cpuid\n");
+		/* OSXSAVE: ecx[bit 27] in basic info */
+		const bool osxsave = !!(basic_info.ecx & bit_OSXSAVE);
+		/* Check that AVX[bit 2] and SSE[bit 1] registers are preserved by OS */
+		const bool ymm_regs = (osxsave ? ((xgetbv_test(0) & 0b110ul) == 0b110ul) : false);
+
+		printf("mini-os supports xgetbv\n");
+
+		struct cpu_info_test structured_info = { 0 };
+		if (max_base_info >= 7) {
+			__cpuid_count(7, 0, structured_info.eax, structured_info.ebx, structured_info.ecx, structured_info.edx);
+		}
+		printf("mini-os supports __cpuid_count\n");
+	}
+}
+
 int main(int argc, char *argv[])
 {
-#if APPHELLOWORLD_PRINTARGS
-	int i;
+	init_x86_hwinfo_test();
+	printf("pass x86_hwinfo test\n");
 
-	printf("Arguments: ");
-	for (i=0; i<argc; ++i)
-		printf(" \"%s\"", argv[i]);
-	printf("\n");
-#endif
 	enum nnp_status init_status = nnp_initialize();
 	if (init_status != nnp_status_success) {
 		fprintf(stderr, "NNPACK initialization failed: error code %d\n", init_status);
