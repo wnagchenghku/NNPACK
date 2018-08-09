@@ -1,6 +1,6 @@
 #pragma once
 
-#include <math.h>
+//#include <math.h>
 
 #include <nnpack.h>
 #include <nnpack/utils.h>
@@ -58,14 +58,14 @@ static inline enum nnp_status validate_convolution_arguments(
 				return nnp_status_invalid_activation_parameters;
 			}
 			break;
-		case nnp_activation_relu:
-			if (activation_parameters != NULL) {
-				const float negative_slope = *((const float*) activation_parameters);
-				if (!isfinite(negative_slope) || negative_slope < 0.0f) {
-					return nnp_status_invalid_activation_parameters;
-				}
-			}
-			break;
+		// case nnp_activation_relu:
+		// 	if (activation_parameters != NULL) {
+		// 		const float negative_slope = *((const float*) activation_parameters);
+		// 		if (!isfinite(negative_slope) || negative_slope < 0.0f) {
+		// 			return nnp_status_invalid_activation_parameters;
+		// 		}
+		// 	}
+		// 	break;
 		default:
 			return nnp_status_invalid_activation;
 	}
