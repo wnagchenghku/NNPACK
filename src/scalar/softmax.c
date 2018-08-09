@@ -17,14 +17,14 @@ static float max__scalar(size_t n, const float v[restrict static n]) {
 static float sum_exp_minus_c__scalar(size_t n, const float v[restrict static n], float c) {
 	float sum = 0.0f;
 	do {
-		sum += expf(*v++ - c);
+		sum += mini_expf(*v++ - c);
 	} while (--n);
 	return sum;
 }
 
 static void scaled_exp_minus_c__scalar(size_t n, const float x[restrict static n], float y[restrict static n], float scale, float c) {
 	do {
-		*y++ = scale * expf(*x++ - c);
+		*y++ = scale * mini_expf(*x++ - c);
 	} while (--n);
 }
 
