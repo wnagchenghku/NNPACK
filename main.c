@@ -26,7 +26,7 @@ __get_cpuid_max_mini (unsigned int __ext, unsigned int *__sig)
   unsigned int __eax, __ebx, __ecx, __edx;
 
   /* Host supports cpuid.  Return highest supported cpuid input value.  */
-  __cpuid (__ext, __eax, __ebx, __ecx, __edx);
+  __cpuid_mini (__ext, __eax, __ebx, __ecx, __edx);
 
   if (__sig)
     *__sig = __ebx;
