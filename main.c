@@ -5,14 +5,14 @@
 
 #define bit_OSXSAVE (1 << 27)
 
-#define __cpuid(level, a, b, c, d)			\
+#define __cpuid_mini(level, a, b, c, d)			\
   __asm__ ("xchg{l}\t{%%}ebx, %1\n\t"			\
 	   "cpuid\n\t"					\
 	   "xchg{l}\t{%%}ebx, %1\n\t"			\
 	   : "=a" (a), "=r" (b), "=c" (c), "=d" (d)	\
 	   : "0" (level))
 
-#define __cpuid_count(level, count, a, b, c, d)		\
+#define __cpuid_count_mini(level, count, a, b, c, d)		\
   __asm__ ("xchg{l}\t{%%}ebx, %1\n\t"			\
 	   "cpuid\n\t"					\
 	   "xchg{l}\t{%%}ebx, %1\n\t"			\
@@ -21,7 +21,7 @@
 
 
 static __inline unsigned int
-__get_cpuid_max (unsigned int __ext, unsigned int *__sig)
+__get_cpuid_max_mini (unsigned int __ext, unsigned int *__sig)
 {
   unsigned int __eax, __ebx, __ecx, __edx;
 
@@ -48,14 +48,14 @@ static inline uint64_t xgetbv_test(uint32_t ext_ctrl_reg) {
 }
 
 void init_x86_hwinfo_test(void) {
-	const uint32_t max_base_info = __get_cpuid_max(0, NULL);
-	const uint32_t max_extended_info = __get_cpuid_max(0x80000000, NULL);
+	const uint32_t max_base_info = __get_cpuid_max_mini(0, NULL);
+	const uint32_t max_extended_info = __get_cpuid_max_mini(0x80000000, NULL);
 
 	printf("mini-os supports __get_cpuid_max\n");
 
 	if (max_base_info >= 1) {
 		struct cpu_info_test basic_info;
-		__cpuid(1, basic_info.eax, basic_info.ebx, basic_info.ecx, basic_info.edx);
+		__cpuid_mini(1, basic_info.eax, basic_info.ebx, basic_info.ecx, basic_info.edx);
 
 		printf("mini-os supports __cpuid\n");
 		/* OSXSAVE: ecx[bit 27] in basic info */
@@ -67,7 +67,7 @@ void init_x86_hwinfo_test(void) {
 
 		struct cpu_info_test structured_info = { 0 };
 		if (max_base_info >= 7) {
-			__cpuid_count(7, 0, structured_info.eax, structured_info.ebx, structured_info.ecx, structured_info.edx);
+			__cpuid_count_mini(7, 0, structured_info.eax, structured_info.ebx, structured_info.ecx, structured_info.edx);
 		}
 		printf("mini-os supports __cpuid_count\n");
 	}
@@ -125,8 +125,8 @@ int main(int argc, char *argv[])
 		NULL);
 
 	if (memory_size != 0) {
-		memory_block = memalign(64, memory_size)
-		if (memory_block == NULL)
+		memory_block = memalign(64, memory_size);
+		if (memory_block == NULL) {
 			fprintf(stderr, "Error: failed to allocate %zu bytes for workspace\n", memory_size);
 			exit(EXIT_FAILURE);
 		}
