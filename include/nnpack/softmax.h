@@ -2,6 +2,11 @@
 
 #include <stddef.h>
 
+static inline float mini_expf(float x)
+{
+	return x;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
