@@ -2,6 +2,15 @@
 
 #include <math.h>
 
+static inline void * mini_memset(void * s,int c,size_t count)
+{
+        char *xs = (char *) s;
+
+        while (count--)
+                *xs++ = c;
+
+        return s;
+}
 
 static inline float relu(float data, float negative_slope) {
 	return signbit(data) ? data * negative_slope : data;
