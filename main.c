@@ -47,7 +47,7 @@ static inline uint64_t xgetbv_test(uint32_t ext_ctrl_reg) {
 			return (((uint64_t) hi) << 32) | (uint64_t) lo;
 }
 
-void init_x86_hwinfo_test(){
+void init_x86_hwinfo_test(void) {
 	const uint32_t max_base_info = __get_cpuid_max(0, NULL);
 	const uint32_t max_extended_info = __get_cpuid_max(0x80000000, NULL);
 
@@ -125,7 +125,8 @@ int main(int argc, char *argv[])
 		NULL);
 
 	if (memory_size != 0) {
-		if (posix_memalign(&memory_block, 64, memory_size) !=0) {
+		memory_block = memalign(64, memory_size)
+		if (memory_block == NULL)
 			fprintf(stderr, "Error: failed to allocate %zu bytes for workspace\n", memory_size);
 			exit(EXIT_FAILURE);
 		}
