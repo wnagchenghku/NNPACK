@@ -84,5 +84,12 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "NNPACK nnp_convolution_inference failed: error code %d\n", status);
 		exit(EXIT_FAILURE);
 	}
-	printf("Hello World\n");
+	int i;
+	printf("[");
+	for (i = 0; i < batch_size * output_channels * output_size.width * output_size.height; ++i) {
+		if (i != 0) printf(", ");
+		printf("%f", *((float*)output + i));
+	}
+	printf("]\n");
+	return 0;
 }
