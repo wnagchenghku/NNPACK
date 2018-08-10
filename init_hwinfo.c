@@ -4,9 +4,6 @@
 
 #if defined(__i386__) || defined(__x86_64__)
 	#include <cpuid.h>
-	#ifndef bit_AVX2
-		#define bit_AVX2 0x00000020
-	#endif
 #endif
 
 struct cpu_info {
