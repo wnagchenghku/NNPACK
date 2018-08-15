@@ -91,5 +91,6 @@ int main(int argc, char *argv[])
 		printf("%f", *((float*)output + i));
 	}
 	printf("]\n");
+	sleep(2);
 	return 0;
 }
