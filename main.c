@@ -4,7 +4,8 @@
 #include <string.h>
 #include <nnpack.h>
 
-int main(int argc, char *argv[])
+
+void convolution()
 {
 	enum nnp_status init_status = nnp_initialize();
 	if (init_status != nnp_status_success) {
@@ -91,6 +92,46 @@ int main(int argc, char *argv[])
 		printf("%f", *((float*)output + i));
 	}
 	printf("]\n");
+}
+
+void fully_connected()
+{
+	enum nnp_status status = nnp_initialize();
+	if (status != nnp_status_success) {
+		fprintf(stderr, "NNPACK initialization failed: error code %d\n", status);
+		exit(EXIT_FAILURE);
+	}
+
+	const size_t batch_size = 1;
+	const size_t input_channels = 4;
+	const size_t output_channels = 4;
+
+	const size_t cache_size = 128 * 1024 * 1024;
+	void *memory = memalign(64, cache_size);
+	if (memory == NULL) {
+		fprintf(stderr, "Error: failed to allocate memory for cache flushing buffer\n");
+		exit(EXIT_FAILURE);
+	}
+
+	void* input = malloc(batch_size * input_channels * sizeof(float));
+	void* kernel = malloc(input_channels * output_channels * sizeof(float));
+	void* output = malloc(batch_size * output_channels * sizeof(float));
+
+	memset(input, 0, batch_size * input_channels * sizeof(float));
+	memset(kernel, 0, input_channels * output_channels * sizeof(float));
+	memset(output, 0, batch_size * output_channels * sizeof(float));
+
+	status = nnp_fully_connected_inference(input_channels, output_channels, input, kernel, output, NULL);
+	if (status != nnp_status_success) {
+		fprintf(stderr, "NNPACK nnp_fully_connected_inference failed: error code %d\n", status);
+		exit(EXIT_FAILURE);
+	}
+}
+
+int main(int argc, char *argv[])
+{
+	convolution();
+	fully_connected();
 	sleep(2);
 	return 0;
 }
