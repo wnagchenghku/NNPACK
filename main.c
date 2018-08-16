@@ -92,6 +92,7 @@ void convolution()
 		printf("%f", *((float*)output + i));
 	}
 	printf("]\n");
+	printf("nnp convolution!\n");
 }
 
 void fully_connected()
@@ -126,6 +127,7 @@ void fully_connected()
 		fprintf(stderr, "NNPACK nnp_fully_connected_inference failed: error code %d\n", status);
 		exit(EXIT_FAILURE);
 	}
+	printf("nnp_fully_connected_inference!\n");
 }
 
 int main(int argc, char *argv[])
