@@ -107,13 +107,6 @@ void fully_connected()
 	const size_t input_channels = 4;
 	const size_t output_channels = 4;
 
-	const size_t cache_size = 128 * 1024 * 1024;
-	void *memory = memalign(64, cache_size);
-	if (memory == NULL) {
-		fprintf(stderr, "Error: failed to allocate memory for cache flushing buffer\n");
-		exit(EXIT_FAILURE);
-	}
-
 	void* input = malloc(batch_size * input_channels * sizeof(float));
 	void* kernel = malloc(input_channels * output_channels * sizeof(float));
 	void* output = malloc(batch_size * output_channels * sizeof(float));
