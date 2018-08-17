@@ -20,7 +20,10 @@ void convolution()
 	const size_t output_channels = 16;
 	const struct nnp_padding input_padding = {0, 0, 0, 0};
 	const struct nnp_size input_size = {180, 180};
-	const struct nnp_size kernel_size = {3, 3};
+	const struct nnp_size kernel_size = {3, 3}; // nnp_convolution_algorithm_ft16x16
+	
+	// const struct nnp_size kernel_size = {1, 1}; // nnp_convolution_algorithm_direct
+
 	const struct nnp_size output_subsampling = {1, 1};
 	const struct nnp_size output_size = {
 		.width = (input_padding.left + input_size.width + input_padding.right - kernel_size.width) / output_subsampling.width + 1,
