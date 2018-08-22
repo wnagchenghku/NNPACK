@@ -30,7 +30,7 @@
 
 struct hardware_info nnp_hwinfo = { };
 //static pthread_once_t hwinfo_init_control = PTHREAD_ONCE_INIT;
-void (*memset_ptr)(void *s, int c, size_t count);
+void* (*memset_ptr)(void *s, int c, size_t count);
 void* (*malloc_ptr)(size_t size);
 void (*free_ptr)(const void *ptr);
 

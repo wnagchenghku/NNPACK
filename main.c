@@ -43,14 +43,14 @@ void convolution()
 	enum nnp_status status = nnp_status_success;
 
 	status = nnp_convolution_inference(
-		algorithm, transform_strategy,
-		input_channels, output_channels,
-		input_size, input_padding, kernel_size, output_subsampling,
-		NULL, NULL, NULL, NULL,
-		NULL, NULL,
-		nnp_activation_identity, NULL,
-		NULL,
-		NULL);
+			algorithm, transform_strategy,
+			input_channels, output_channels,
+			input_size, input_padding, kernel_size, output_subsampling,
+			input, kernel, bias, output,
+			NULL, NULL,
+			nnp_activation_identity, NULL,
+			NULL,
+			NULL);
 
 	if (status != nnp_status_success) {
 		printf("NNPACK nnp_convolution_inference failed: error code %d\n", status);
@@ -59,8 +59,8 @@ void convolution()
 	int i;
 	printf("[");
 	for (i = 0; i < batch_size * output_channels * output_size.width * output_size.height; ++i) {
-		if (i != 0) printf(", ");
-		printf("%f", *((float*)output + i));
+		//if (i != 0) printf(", ");
+		//printf("%f", *((float*)output + i));
 	}
 	printf("]\n");
 	printf("nnp convolution!\n");
