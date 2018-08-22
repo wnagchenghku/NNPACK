@@ -10,7 +10,7 @@ void convolution()
 	enum nnp_status init_status = nnp_initialize(&memset, &malloc, &free);
 	if (init_status != nnp_status_success) {
 		printf("NNPACK initialization failed: error code %d\n", init_status);
-		exit();
+		exit(1);
 	}
 	printf("NNPACK init true\n");
 
@@ -54,7 +54,7 @@ void convolution()
 
 	if (status != nnp_status_success) {
 		printf("NNPACK nnp_convolution_inference failed: error code %d\n", status);
-		exit();
+		exit(1);
 	}
 	int i;
 	printf("[");
@@ -71,7 +71,7 @@ void fully_connected()
 	enum nnp_status status = nnp_initialize();
 	if (status != nnp_status_success) {
 		printf("NNPACK initialization failed: error code %d\n", status);
-		exit();
+		exit(1);
 	}
 
 	const size_t batch_size = 1;
@@ -89,7 +89,7 @@ void fully_connected()
 	status = nnp_fully_connected_inference(input_channels, output_channels, input, kernel, output, NULL);
 	if (status != nnp_status_success) {
 		printf("NNPACK nnp_fully_connected_inference failed: error code %d\n", status);
-		exit();
+		exit(1);
 	}
 	printf("nnp_fully_connected_inference!\n");
 }
