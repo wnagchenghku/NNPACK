@@ -24,11 +24,11 @@ void nnp_iwt8x8_3x3_with_offset__scalar(
 
 	float block[BLOCK_SIZE][BLOCK_SIZE];
 	if (row_offset != 0) {
-		mini_memset(&block[0][0], 0, row_offset * BLOCK_SIZE * sizeof(float));
+		(*memset_ptr)(&block[0][0], 0, row_offset * BLOCK_SIZE * sizeof(float));
 	}
 	const uint32_t row_end = row_offset + row_count;
 	if (row_end != BLOCK_SIZE) {
-		mini_memset(&block[row_end][0], 0, (BLOCK_SIZE - row_end) * BLOCK_SIZE * sizeof(float));
+		(*memset_ptr)(&block[row_end][0], 0, (BLOCK_SIZE - row_end) * BLOCK_SIZE * sizeof(float));
 	}
 
 	for (uint32_t row = row_offset; row < row_end; row++) {

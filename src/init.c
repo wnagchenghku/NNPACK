@@ -30,7 +30,9 @@
 
 struct hardware_info nnp_hwinfo = { };
 //static pthread_once_t hwinfo_init_control = PTHREAD_ONCE_INIT;
-
+void (*memset_ptr)(void *s, int c, size_t count);
+void* (*malloc_ptr)(size_t size);
+void (*free_ptr)(const void *ptr);
 
 #if (defined(__i386__) || defined(__x86_64__)) && !defined(__ANDROID__)
 
@@ -730,8 +732,11 @@ static void init_hwinfo(void) {
 	nnp_hwinfo.initialized = true;
 }
 
-enum nnp_status nnp_initialize(void) {
+enum nnp_status nnp_initialize(void *memset_addr, void *malloc_addr, void *free_addr) {
 	//pthread_once(&hwinfo_init_control, &init_hwinfo);
+	memset_ptr = memset_addr;
+	malloc_ptr = malloc_addr;
+	free_ptr = free_addr;
 	init_hwinfo();
 	if (nnp_hwinfo.supported) {
 		return nnp_status_success;

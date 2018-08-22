@@ -435,7 +435,7 @@ static void compute_direct_convolution(
 	const float* kernel = context->kernel + output_channels_block_start * input_channels;
 	float* output       = context->output + output_channels_block_start * image_elements;
 
-	mini_memset(output, 0, sizeof(float) * output_channels_block_size * image_elements);
+	(*memset_ptr)(output, 0, sizeof(float) * output_channels_block_size * image_elements);
 
 	size_t input_channels_unprocessed = input_channels;
 	if (output_channels_block_size == output_channels_block_max) {
