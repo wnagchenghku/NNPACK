@@ -64,3 +64,7 @@
 #else
 	#define NNP_INLINE inline
 #endif
+
+extern void (*memset_ptr)(void *, int, size_t);
+extern void* (*malloc_ptr)(size_t);
+extern void (*free_ptr)(const void *);

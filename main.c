@@ -7,7 +7,7 @@
 
 void convolution()
 {
-	enum nnp_status init_status = nnp_initialize();
+	enum nnp_status init_status = nnp_initialize(&memset, &malloc, &free);
 	if (init_status != nnp_status_success) {
 		printf("NNPACK initialization failed: error code %d\n", init_status);
 		exit();

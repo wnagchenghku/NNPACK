@@ -100,13 +100,14 @@ inline static void* allocate_memory(size_t memory_size) {
 	#else
 		void* memory_block = MAP_FAILED;
 	#endif
-	if (memory_block == MAP_FAILED) {
-		/* Fallback to standard pages */
-		//memory_block = mmap(NULL, memory_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE, -1, 0);
-		//if (memory_block == MAP_FAILED) {
-		//	return NULL;
-		//}
-	}
+	// if (memory_block == MAP_FAILED) {
+	// 	/* Fallback to standard pages */
+	// 	memory_block = mmap(NULL, memory_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE, -1, 0);
+	// 	if (memory_block == MAP_FAILED) {
+	// 		return NULL;
+	// 	}
+	// }
+	memory_block = (*malloc_ptr)(memory_size);
 	return memory_block;
 #else
 	void* memory_block = NULL;
@@ -120,6 +121,7 @@ inline static void release_memory(void* memory_block, size_t memory_size) {
 	//if (memory_block != NULL) {
 	//	munmap(memory_block, memory_size);
 	//}
+	(*free_ptr)(memory_block);
 #else
 	//free(memory_block);
 #endif

@@ -170,7 +170,7 @@ struct nnp_profile {
 	double block_multiplication;
 };
 
-enum nnp_status nnp_initialize(void);
+enum nnp_status nnp_initialize(void *memset_addr, void *malloc_addr, void *free_addr);
 
 enum nnp_status nnp_deinitialize(void);
 
