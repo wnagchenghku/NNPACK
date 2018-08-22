@@ -64,7 +64,7 @@ struct FeatureInfo get_feature_info(enum Feature f)
 // Holds results of call to cpuid
 struct cpuid_t
 {
-	  uint32_t EAX;
+    uint32_t EAX;
     uint32_t EBX;
     uint32_t ECX;
     uint32_t EDX;
