@@ -38,24 +38,24 @@ struct FeatureInfo get_feature_info(enum Feature f)
       // ----------------------------------------------------------------------
       // EAX=1: Processor Info and Feature Bits
       // ----------------------------------------------------------------------
-      case SSE3:         return FeatureInfo { 1, 0, ECX, 1u <<  0 }; // Streaming SIMD Extensions 3
-      case SSSE3:        return FeatureInfo { 1, 0, ECX, 1u <<  9 }; // Supplemental Streaming SIMD Extensions 3
-      case SSE4_1:       return FeatureInfo { 1, 0, ECX, 1u << 19 }; // Streaming SIMD Extensions 4.1
-      case SSE4_2:       return FeatureInfo { 1, 0, ECX, 1u << 20 }; // Streaming SIMD Extensions 4.2
-      case XSAVE:        return FeatureInfo { 1, 0, ECX, 1u << 26 }; // XSAVE/XSTOR States
-      case OSXSAVE:      return FeatureInfo { 1, 0, ECX, 1u << 27 }; // OS Enabled Extended State Management
-      case AVX:          return FeatureInfo { 1, 0, ECX, 1u << 28 }; // AVX Instructions
+      case SSE3:         return (struct FeatureInfo) { 1, 0, ECX, 1u <<  0 }; // Streaming SIMD Extensions 3
+      case SSSE3:        return (struct FeatureInfo) { 1, 0, ECX, 1u <<  9 }; // Supplemental Streaming SIMD Extensions 3
+      case SSE4_1:       return (struct FeatureInfo) { 1, 0, ECX, 1u << 19 }; // Streaming SIMD Extensions 4.1
+      case SSE4_2:       return (struct FeatureInfo) { 1, 0, ECX, 1u << 20 }; // Streaming SIMD Extensions 4.2
+      case XSAVE:        return (struct FeatureInfo) { 1, 0, ECX, 1u << 26 }; // XSAVE/XSTOR States
+      case OSXSAVE:      return (struct FeatureInfo) { 1, 0, ECX, 1u << 27 }; // OS Enabled Extended State Management
+      case AVX:          return (struct FeatureInfo) { 1, 0, ECX, 1u << 28 }; // AVX Instructions
 
-      case FPU:          return FeatureInfo { 1, 0, EDX, 1u <<  0 }; // Floating-Point Unit On-Chip
+      case FPU:          return (struct FeatureInfo) { 1, 0, EDX, 1u <<  0 }; // Floating-Point Unit On-Chip
 
-      case SSE:          return FeatureInfo { 1, 0, EDX, 1u << 25 }; // Streaming SIMD Extensions
-      case SSE2:         return FeatureInfo { 1, 0, EDX, 1u << 26 }; // Streaming SIMD Extensions 2
+      case SSE:          return (struct FeatureInfo) { 1, 0, EDX, 1u << 25 }; // Streaming SIMD Extensions
+      case SSE2:         return (struct FeatureInfo) { 1, 0, EDX, 1u << 26 }; // Streaming SIMD Extensions 2
 
       // ----------------------------------------------------------------------
       // EAX=80000001h: Extended Processor Info and Feature Bits (not complete)
       // ----------------------------------------------------------------------
-      case SSE4A:        return FeatureInfo { 0x80000001, 0, ECX, 1u <<  6 }; // SSE4a
-      case AVX2:         return FeatureInfo { 7, 0, ECX, 1u <<  5 }; // AVX2
+      case SSE4A:        return (struct FeatureInfo) { 0x80000001, 0, ECX, 1u <<  6 }; // SSE4a
+      case AVX2:         return (struct FeatureInfo) { 7, 0, ECX, 1u <<  5 }; // AVX2
 
     }
 
