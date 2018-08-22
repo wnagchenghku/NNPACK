@@ -68,7 +68,7 @@ void convolution()
 
 void fully_connected()
 {
-	enum nnp_status status = nnp_initialize();
+	enum nnp_status status = nnp_initialize(&memset, &malloc, &free);
 	if (status != nnp_status_success) {
 		printf("NNPACK initialization failed: error code %d\n", status);
 		exit(1);
