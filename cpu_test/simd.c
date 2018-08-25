@@ -53,22 +53,23 @@ static void init_x86_hwinfo(void) {
 			__cpuid_count(7, 0, structured_info.eax, structured_info.ebx, structured_info.ecx, structured_info.edx);
 		}
 
+		/*
+		 * SSE instructions:
+		 * - Intel, AMD: edx[bit 25] in basic info.
+	     */
+		nnp_hwinfo.isa.has_sse = !!(basic_info.edx & bit_SSE);
+		/*
+		 * SSE2 instructions:
+		 * - Intel, AMD: edx[bit 26] in basic info.
+		 */
+	    nnp_hwinfo.isa.has_sse2 = !!(basic_info.edx & bit_SSE2);
+		/*
+		 * SSE3 instructions:
+		 * - Intel, AMD: ecx[bit 0] in basic info.
+		 */
+	    nnp_hwinfo.isa.has_sse3 = !!(basic_info.ecx & bit_SSE3);
+
 		if (ymm_regs) {
-			/*
-			 * SSE instructions:
-			 * - Intel, AMD: edx[bit 25] in basic info.
-			 */
-			nnp_hwinfo.isa.has_sse = !!(basic_info.edx & bit_SSE);
-			/*
-			 * SSE2 instructions:
-			 * - Intel, AMD: edx[bit 26] in basic info.
-			 */
-			nnp_hwinfo.isa.has_sse2 = !!(basic_info.edx & bit_SSE2);
-			/*
-			 * SSE3 instructions:
-			 * - Intel, AMD: ecx[bit 0] in basic info.
-			 */
-			nnp_hwinfo.isa.has_sse3 = !!(basic_info.ecx & bit_SSE3);
 			/* AVX: ecx[bit 28] in basic info */
 			nnp_hwinfo.isa.has_avx  = !!(basic_info.ecx & bit_AVX);
 			/* FMA3: ecx[bit 12] in basic info */
