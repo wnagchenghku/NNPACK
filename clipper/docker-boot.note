@@ -1,0 +1,6 @@
+docker boot up time:
+
+1. apt-get install docker.io
+2. clone https://repos.ant-net/fschmidt/docker-instrumented
+3. make build
+4. make binary
