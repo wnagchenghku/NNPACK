@@ -427,6 +427,13 @@ class BasicNN(nn.Module):
 #             optimizer.step()
 #     return model
 
+trained_models = ['resnet18', 'alexnet', 'vgg16', 'squeezenet1_0', 'densenet161']
+
+#for model_name in trained_models:
+#    model = getattr(models, model_name)()
+#    input = torch.randn(1, 3, 224, 224)
+#    output = model(input)
+#    print(output)
 
 def main():
     pos_label = 3
