@@ -4,7 +4,7 @@
 4. cp libnnpack.a and libpthreadpool.a to NNPACK/lib
 5. export NNPACK_DIR=
 6. sudo -E python setup.py install
-7. vision 0.2.1
+7. vision 0.2.1 (we don't need to vision in container)
 8. Pytorch "ensure large enough batch size to ensure perf, tuneable" to enable NNPACK (convolution.cpp)
 
 .py
