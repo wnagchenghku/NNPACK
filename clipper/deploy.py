@@ -140,21 +140,8 @@ def deploy_pytorch_model(name,
                          func,
                          pytorch_model,
                          deploy_type):
-    serialization_dir = save_python_function(name, func)
-
-    # save Torch model
-    torch_weights_save_loc = os.path.join(serialization_dir,
-                                          PYTORCH_WEIGHTS_RELATIVE_PATH)
-
-    torch_model_save_loc = os.path.join(serialization_dir,
-                                        PYTORCH_MODEL_RELATIVE_PATH)
 
     try:
-        torch.save(pytorch_model.state_dict(), torch_weights_save_loc)
-        serialized_model = serialize_object(pytorch_model)
-        with open(torch_model_save_loc, "wb") as serialized_model_file:
-            serialized_model_file.write(serialized_model)
-
         if deploy_type == "container":
             py_minor_version = (sys.version_info.major, sys.version_info.minor)
             # Check if Python 2 or Python 3 image
@@ -190,6 +177,20 @@ def deploy_pytorch_model(name,
             build_and_deploy_model(
                 name, base_image,
                 pkgs_to_install)
+        else:
+            serialization_dir = save_python_function(name, func)
+
+            # save Torch model
+            torch_weights_save_loc = os.path.join(serialization_dir,
+                                                  PYTORCH_WEIGHTS_RELATIVE_PATH)
+
+            torch_model_save_loc = os.path.join(serialization_dir,
+                                                PYTORCH_MODEL_RELATIVE_PATH)
+
+            torch.save(pytorch_model.state_dict(), torch_weights_save_loc)
+            serialized_model = serialize_object(pytorch_model)
+            with open(torch_model_save_loc, "wb") as serialized_model_file:
+                serialized_model_file.write(serialized_model)
 
     except Exception as e:
         raise ClipperException("Error saving torch model: %s" % e)
@@ -219,7 +220,7 @@ def main():
     if para_sets.model_name == "all":
         for model_name in trained_models:
             deploy_and_test_model(getattr(models, model_name)(), model_name, para_sets.deploy_type)
-    else
+    else:
         deploy_and_test_model(getattr(models, para_sets.model_name)(), para_sets.model_name, para_sets.deploy_type)
 
 if __name__ == '__main__':
