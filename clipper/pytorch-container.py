@@ -337,13 +337,13 @@ def deploy_pytorch_model(name,
         if base_image == "default":
             if py_minor_version < (3, 0):
                 logger.warning("Using Python 2 base image")
-                base_image = "wangchenghku/pytorch-container:3c5a1cc6ce"
+                base_image = "pytorch"
             elif py_minor_version == (3, 5):
                 logger.warning("Using Python 3.5 base image")
-                base_image = "wangchenghku/pytorch-container:3c5a1cc6ce"
+                base_image = "pytorch"
             elif py_minor_version == (3, 6):
                 logger.warning("Using Python 3.6 base image")
-                base_image = "wangchenghku/pytorch-container:3c5a1cc6ce"
+                base_image = "pytorch"
             else:
                 msg = (
                     "PyTorch deployer only supports Python 2.7, 3.5, and 3.6. "

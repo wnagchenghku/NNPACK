@@ -3,7 +3,6 @@ import os
 import sys
 import json
 
-import numpy as np
 import cloudpickle
 import torch
 import importlib

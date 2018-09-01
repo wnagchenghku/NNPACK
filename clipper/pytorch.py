@@ -59,9 +59,9 @@ class PyTorchContainer():
     #     preds = self.predict_func(self.model, inputs)
     #     return [str(p) for p in preds]
 
-    # def predict_floats(self, inputs):
-    #     preds = self.predict_func(self.model, inputs)
-    #     return [str(p) for p in preds]
+    def predict_floats(self, inputs):
+        preds = self.predict_func(self.model, inputs)
+        # return [str(p) for p in preds]
 
     # def predict_doubles(self, inputs):
     #     preds = self.predict_func(self.model, inputs)
@@ -88,3 +88,5 @@ if __name__ == "__main__":
     except ImportError:
         sys.exit(IMPORT_ERROR_RETURN_CODE)
     # rpc_service.start(model)
+    inputs = torch.randn(1, 3, 224, 224)
+    model.predict_floats(inputs)

@@ -1,10 +1,20 @@
 import torch
-
+import docker
+import os
+import sys
+import logging
 
 PYTORCH_WEIGHTS_RELATIVE_PATH = "pytorch_weights.pkl"
 PYTORCH_MODEL_RELATIVE_PATH = "pytorch_model.pkl"
 
 trained_models = ['resnet18', 'densenet201']
+
+class ClipperException(Exception):
+    """A generic exception indicating that Clipper encountered a problem."""
+
+    def __init__(self, msg, *args):
+        self.msg = msg
+        super(Exception, self).__init__(msg, *args)
 
 def build_model(name,
 	            model_data_path,
@@ -68,6 +78,18 @@ def build_model(name,
 
     return image
 
+def build_and_deploy_model(name,
+                           input_type,
+                           model_data_path,
+                           base_image,
+                           labels=None,
+                           container_registry=None,
+                           pkgs_to_install=None):
+
+    image = build_model(name, model_data_path, base_image,
+                        container_registry, pkgs_to_install)
+
+
 def serialize_object(obj):
     s = StringIO()
     c = CloudPickler(s, 2)
@@ -75,31 +97,34 @@ def serialize_object(obj):
     return s.getvalue()
 
 def save_python_function(name, func):
-    # predict_fname = "func.pkl"
+    predict_fname = "func.pkl"
 
     # Serialize function
-    # s = StringIO()
-    # c = CloudPickler(s, 2)
-    # c.dump(func)
-    # serialized_prediction_function = s.getvalue()
+    s = StringIO()
+    c = CloudPickler(s, 2)
+    c.dump(func)
+    serialized_prediction_function = s.getvalue()
 
     # Set up serialization directory
-    serialization_dir = os.path.abspath(tempfile.mkdtemp(suffix='clipper'))
+    # serialization_dir = os.path.abspath(tempfile.mkdtemp(suffix='clipper'))
+    serialization_dir = "model/{}/".format(name)
     logger.info("Saving function to {}".format(serialization_dir))
 
     # Write out function serialization
-    # func_file_path = os.path.join(serialization_dir, predict_fname)
-    # if sys.version_info < (3, 0):
-    #     with open(func_file_path, "w") as serialized_function_file:
-    #         serialized_function_file.write(serialized_prediction_function)
-    # else:
-    #     with open(func_file_path, "wb") as serialized_function_file:
-    #         serialized_function_file.write(serialized_prediction_function)
-    # logging.info("Serialized and supplied predict function")
+    func_file_path = os.path.join(serialization_dir, predict_fname)
+    if sys.version_info < (3, 0):
+        with open(func_file_path, "w") as serialized_function_file:
+            serialized_function_file.write(serialized_prediction_function)
+    else:
+        with open(func_file_path, "wb") as serialized_function_file:
+            serialized_function_file.write(serialized_prediction_function)
+    logging.info("Serialized and supplied predict function")
     return serialization_dir
 
-def deploy_pytorch_model(pytorch_model):
-	serialization_dir = save_python_function(name, func)
+def deploy_pytorch_model(name,
+                         func,
+                         pytorch_model):
+    serialization_dir = save_python_function(name, func)
 
     # save Torch model
     torch_weights_save_loc = os.path.join(serialization_dir,
@@ -115,18 +140,31 @@ def deploy_pytorch_model(pytorch_model):
             serialized_model_file.write(serialized_model)
 
         # Deploy model
-        build_and_deploy_model(
-            name, version, input_type, serialization_dir, base_image, labels,
-            registry, pkgs_to_install)
+        # build_and_deploy_model(
+        #     name, version, input_type, serialization_dir, base_image, labels,
+        #     registry, pkgs_to_install)
 
     except Exception as e:
-        raise Exception("Error saving torch model: %s" % e)
+        raise ClipperException("Error saving torch model: %s" % e)
+
+def predict(model, xs):
+    # preds = []
+    # for x in xs:
+    #     p = model(x).data.numpy().tolist()[0]
+    #     preds.append(str(p))
+    # return preds
+    preds = model(xs)
+    return preds
+
+def deploy_and_test_model(model,
+                          model_name,
+                          predict_fn=predict):
+    deploy_pytorch_model(model_name, predict_fn, model)
 
 def main():
 
-	for model in trained_models:
-		deploy_pytorch_model(getattr(models, model)())
-
+	for model_name in trained_models:
+		deploy_and_test_model(getattr(models, model)(), model_name)
 
 if __name__ == '__main__':
 	main()
