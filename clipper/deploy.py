@@ -4,7 +4,6 @@ import os
 import sys
 import logging
 import torchvision.models as models
-import cloud
 from cloudpickle import CloudPickler
 
 PYTORCH_WEIGHTS_RELATIVE_PATH = "pytorch_weights.pkl"

@@ -12,6 +12,8 @@ from torch import nn
 from torch.autograd import Variable
 import torch.nn.functional as F
 
+import argparse
+
 IMPORT_ERROR_RETURN_CODE = 3
 
 PYTORCH_WEIGHTS_RELATIVE_PATH = "pytorch_weights.pkl"
@@ -41,18 +43,25 @@ def load_pytorch_model(model_path, weights_path):
 
 # class PyTorchContainer(rpc.ModelContainerBase):
 class PyTorchContainer():
-#     def __init__(self, path, input_type):
-    def __init__(self, path):
-#         self.input_type = rpc.string_to_input_type(input_type)
-        modules_folder_path = "{dir}/modules/".format(dir=path)
+    # def __init__(self, path, input_type):
+    def __init__(self, model_name):
+        # self.input_type = rpc.string_to_input_type(input_type)
+        # modules_folder_path = "{dir}/modules/".format(dir=path)
+        modules_folder_path = "model/{model_name}".format(model_name=model_name)
         sys.path.append(os.path.abspath(modules_folder_path))
-        # predict_fname = "func.pkl"
+        predict_fname = "func.pkl"
         # predict_path = "{dir}/{predict_fname}".format(
         #     dir=path, predict_fname=predict_fname)
-        # self.predict_func = load_predict_func(predict_path)
+        predict_path = "{dir}/{predict_fname}".format(
+            dir=modules_folder_path, predict_fname=predict_fname)
 
-        torch_model_path = os.path.join(path, PYTORCH_MODEL_RELATIVE_PATH)
-        torch_weights_path = os.path.join(path, PYTORCH_WEIGHTS_RELATIVE_PATH)
+        self.predict_func = load_predict_func(predict_path)
+
+        # torch_model_path = os.path.join(path, PYTORCH_MODEL_RELATIVE_PATH)
+        # torch_weights_path = os.path.join(path, PYTORCH_WEIGHTS_RELATIVE_PATH)
+        torch_model_path = os.path.join(modules_folder_path, PYTORCH_MODEL_RELATIVE_PATH)
+        torch_weights_path = os.path.join(modules_folder_path, PYTORCH_WEIGHTS_RELATIVE_PATH)
+
         self.model = load_pytorch_model(torch_model_path, torch_weights_path)
 
     # def predict_ints(self, inputs):
@@ -79,10 +88,13 @@ class PyTorchContainer():
 if __name__ == "__main__":
     print("Starting PyTorchContainer container")
     # rpc_service = rpc.RPCService()
+    parser = argparse.ArgumentParser(description='Parse model name.')
+    parser.add_argument('model_name', type=str, nargs=1, required=True, help='Please specify a model for prediction')
+    args = parser.parse_args()
     try:
         # model = PyTorchContainer(rpc_service.get_model_path(),
         #                          rpc_service.get_input_type())
-        model = PyTorchContainer()
+        model = PyTorchContainer(args.model_name)
         sys.stdout.flush()
         sys.stderr.flush()
     except ImportError:
