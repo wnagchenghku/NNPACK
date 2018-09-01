@@ -230,6 +230,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-
-
-# docker run [COMMAND] [ARG...]
