@@ -46,7 +46,7 @@ def build_model(name,
 
     # run_cmd = ''
     run_cmd = 'RUN python deploy.py -m {name}'.format(name=name)
-    entrypoint = 'ENTRYPOINT ["python", "pytorch_container.py", "-m {name}"]'.format(name=name)
+    entrypoint = 'ENTRYPOINT ["python", "pytorch_container.py", "-m", "{name}"]'.format(name=name)
     if pkgs_to_install:
         run_as_lst = 'RUN apt-get -y install build-essential && pip install'.split(
             ' ')
