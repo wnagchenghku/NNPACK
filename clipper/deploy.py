@@ -93,7 +93,7 @@ def build_model(name,
             image = "{reg}/{image}".format(
                 reg=container_registry, image=image)
         docker_client = docker.from_env()
-        logger.info("Building model Docker image with model data from {}".format(model_data_path))
+        # logger.info("Building model Docker image with model data from {}".format(model_data_path))
         image_result, build_logs = docker_client.images.build(
             fileobj=context_file, custom_context=True, tag=image)
         for b in build_logs:
@@ -104,7 +104,6 @@ def build_model(name,
 
 def build_and_deploy_model(name,
                            base_image,
-                           labels=None,
                            container_registry=None,
                            pkgs_to_install=None):
 
