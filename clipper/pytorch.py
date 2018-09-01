@@ -1,5 +1,5 @@
 from __future__ import print_function
-import rpc
+# import rpc
 import os
 import sys
 import json
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     print("Starting PyTorchContainer container")
     # rpc_service = rpc.RPCService()
     parser = argparse.ArgumentParser(description='Parse model name.')
-    parser.add_argument('model_name', type=str, nargs=1, required=True, help='Please specify a model for prediction')
+    parser.add_argument('-m', type=str, dest="model_name", action="store", required=True)
     args = parser.parse_args()
     try:
         # model = PyTorchContainer(rpc_service.get_model_path(),
