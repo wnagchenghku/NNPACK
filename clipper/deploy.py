@@ -3,6 +3,7 @@ import docker
 import os
 import sys
 import logging
+import torchvision.models as models
 
 PYTORCH_WEIGHTS_RELATIVE_PATH = "pytorch_weights.pkl"
 PYTORCH_MODEL_RELATIVE_PATH = "pytorch_model.pkl"
@@ -15,6 +16,22 @@ class ClipperException(Exception):
     def __init__(self, msg, *args):
         self.msg = msg
         super(Exception, self).__init__(msg, *args)
+
+if sys.version_info < (3, 0):
+    try:
+        from cStringIO import StringIO
+    except ImportError:
+        from StringIO import StringIO
+    PY3 = False
+else:
+    from io import BytesIO as StringIO
+    PY3 = True
+
+def serialize_object(obj):
+    s = StringIO()
+    c = CloudPickler(s, 2)
+    c.dump(obj)
+    return s.getvalue()
 
 def build_model(name,
 	            model_data_path,
@@ -89,13 +106,6 @@ def build_and_deploy_model(name,
     image = build_model(name, model_data_path, base_image,
                         container_registry, pkgs_to_install)
 
-
-def serialize_object(obj):
-    s = StringIO()
-    c = CloudPickler(s, 2)
-    c.dump(obj)
-    return s.getvalue()
-
 def save_python_function(name, func):
     predict_fname = "func.pkl"
 
@@ -164,7 +174,7 @@ def deploy_and_test_model(model,
 def main():
 
 	for model_name in trained_models:
-		deploy_and_test_model(getattr(models, model)(), model_name)
+		deploy_and_test_model(getattr(models, model_name)(), model_name)
 
 if __name__ == '__main__':
 	main()
