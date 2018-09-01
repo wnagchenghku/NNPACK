@@ -45,7 +45,8 @@ def build_model(name,
                 pkgs_to_install=None):
 
     # run_cmd = ''
-    run_cmd = 'RUN /usr/bin/python deploy.py -m {name}'.format(name=name)
+    run_cmd = 'RUN python deploy.py -m {name}'.format(name=name)
+    entrypoint = 'ENTRYPOINT ["python", "pytorch_container.py", "-m {name}"]'.format(name=name)
     if pkgs_to_install:
         run_as_lst = 'RUN apt-get -y install build-essential && pip install'.split(
             ' ')
@@ -61,11 +62,12 @@ def build_model(name,
                 df_contents = StringIO(
                     str.encode(
                         # "FROM {container_name}\n{run_command}\nCOPY {data_path} /model/\n".
-                        "FROM {container_name}\n{run_command}\n".
+                        "FROM {container_name}\n{run_command}\n{entrypoint}".
                         format(
                             container_name=base_image,
                             # data_path=model_data_path,
-                            run_command=run_cmd)))
+                            run_command=run_cmd,
+                            entrypoint=entrypoint)))
                 df_tarinfo = tarfile.TarInfo('Dockerfile')
                 df_contents.seek(0, os.SEEK_END)
                 df_tarinfo.size = df_contents.tell()
@@ -228,3 +230,6 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
+
+# docker run [COMMAND] [ARG...]

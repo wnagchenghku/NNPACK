@@ -4,7 +4,7 @@ import os
 import sys
 import json
 
-import numpy as np
+# import numpy as np
 import cloudpickle
 import torch
 import importlib
@@ -13,6 +13,7 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 
 import argparse
+import datetime
 
 IMPORT_ERROR_RETURN_CODE = 3
 
@@ -91,6 +92,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Parse model name.')
     parser.add_argument('-m', type=str, dest="model_name", action="store", required=True)
     args = parser.parse_args()
+
+    load_start = datetime.datetime.now()
     try:
         # model = PyTorchContainer(rpc_service.get_model_path(),
         #                          rpc_service.get_input_type())
@@ -99,6 +102,14 @@ if __name__ == "__main__":
         sys.stderr.flush()
     except ImportError:
         sys.exit(IMPORT_ERROR_RETURN_CODE)
+    load_end = datetime.datetime.now()
+
     # rpc_service.start(model)
     inputs = torch.randn(1, 3, 224, 224)
+
+    predict_start = datetime.datetime.now()
     model.predict_floats(torch.autograd.Variable(inputs))
+    predict_end = datetime.datetime.now()
+
+    print("model loading takes %d s, %d us\n" % ((load_end - load_start).seconds, (load_end - load_start).microseconds))
+    print("prediction takes %d s, %d us\n" % ((predict_end - predict_start).seconds, (predict_end - predict_start).microseconds))
