@@ -101,4 +101,4 @@ if __name__ == "__main__":
         sys.exit(IMPORT_ERROR_RETURN_CODE)
     # rpc_service.start(model)
     inputs = torch.randn(1, 3, 224, 224)
-    model.predict_floats(inputs)
+    model.predict_floats(torch.autograd.Variable(inputs))
