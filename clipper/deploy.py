@@ -42,7 +42,8 @@ def build_model(name,
                 container_registry=None,
                 pkgs_to_install=None):
 
-    run_cmd = ''
+    # run_cmd = ''
+    run_cmd = 'RUN /usr/bin/python deploy.py -m {name}'.format(name=name)
     if pkgs_to_install:
         run_as_lst = 'RUN apt-get -y install build-essential && pip install'.split(
             ' ')
@@ -57,10 +58,11 @@ def build_model(name,
             try:
                 df_contents = StringIO(
                     str.encode(
-                        "FROM {container_name}\n{run_command}\nCOPY {data_path} /model/\n".
+                        # "FROM {container_name}\n{run_command}\nCOPY {data_path} /model/\n".
+                        "FROM {container_name}\n{run_command}\n".
                         format(
                             container_name=base_image,
-                            data_path=model_data_path,
+                            # data_path=model_data_path,
                             run_command=run_cmd)))
                 df_tarinfo = tarfile.TarInfo('Dockerfile')
                 df_contents.seek(0, os.SEEK_END)
@@ -69,10 +71,11 @@ def build_model(name,
                 context_tar.addfile(df_tarinfo, df_contents)
             except TypeError:
                 df_contents = StringIO(
-                    "FROM {container_name}\n{run_command}\nCOPY {data_path} /model/\n".
+                    # "FROM {container_name}\n{run_command}\nCOPY {data_path} /model/\n".
+                    "FROM {container_name}\n{run_command}\n".
                     format(
                         container_name=base_image,
-                        data_path=model_data_path,
+                        # data_path=model_data_path,
                         run_command=run_cmd))
                 df_tarinfo = tarfile.TarInfo('Dockerfile')
                 df_contents.seek(0, os.SEEK_END)
@@ -97,7 +100,6 @@ def build_model(name,
     return image
 
 def build_and_deploy_model(name,
-                           input_type,
                            model_data_path,
                            base_image,
                            labels=None,
@@ -106,6 +108,7 @@ def build_and_deploy_model(name,
 
     image = build_model(name, model_data_path, base_image,
                         container_registry, pkgs_to_install)
+
 
 def save_python_function(name, func):
     predict_fname = "func.pkl"
@@ -135,7 +138,8 @@ def save_python_function(name, func):
 
 def deploy_pytorch_model(name,
                          func,
-                         pytorch_model):
+                         pytorch_model,
+                         deploy_type):
     serialization_dir = save_python_function(name, func)
 
     # save Torch model
@@ -151,10 +155,41 @@ def deploy_pytorch_model(name,
         with open(torch_model_save_loc, "wb") as serialized_model_file:
             serialized_model_file.write(serialized_model)
 
-        # Deploy model
-        # build_and_deploy_model(
-        #     name, version, input_type, serialization_dir, base_image, labels,
-        #     registry, pkgs_to_install)
+        if deploy_type == "container":
+            py_minor_version = (sys.version_info.major, sys.version_info.minor)
+            # Check if Python 2 or Python 3 image
+            if base_image == "default":
+                if py_minor_version < (3, 0):
+                    logger.info("Using Python 2 base image")
+                    # base_image = "{}/pytorch-container:{}".format(
+                    #     __registry__, __version__)
+                    base_image = "pytorch-container"
+                elif py_minor_version == (3, 5):
+                    logger.info("Using Python 3.5 base image")
+                    # base_image = "{}/pytorch35-container:{}".format(
+                    #     __registry__, __version__)
+                    # base_image = "pytorch35-container"
+                    base_image = "pytorch-container"
+                elif py_minor_version == (3, 6):
+                    logger.info("Using Python 3.6 base image")
+                    # base_image = "{}/pytorch36-container:{}".format(
+                    #     __registry__, __version__)
+                    # base_image = "pytorch36-container"
+                else:
+                    msg = (
+                        "PyTorch deployer only supports Python 2.7, 3.5, and 3.6. "
+                        "Detected {major}.{minor}").format(
+                            major=sys.version_info.major,
+                            minor=sys.version_info.minor)
+                    logger.error(msg)
+                    # Remove temp files
+                    # shutil.rmtree(serialization_dir)
+                    raise ClipperException(msg)
+
+            # Deploy model
+            build_and_deploy_model(
+                name, base_image,
+                pkgs_to_install)
 
     except Exception as e:
         raise ClipperException("Error saving torch model: %s" % e)
@@ -170,13 +205,22 @@ def predict(model, xs):
 
 def deploy_and_test_model(model,
                           model_name,
+                          deploy_type,
                           predict_fn=predict):
     deploy_pytorch_model(model_name, predict_fn, model)
 
 def main():
 
-	for model_name in trained_models:
-		deploy_and_test_model(getattr(models, model_name)(), model_name)
+	parser = argparse.ArgumentParser("Deploy models");
+    parser.add_argument("-m", dest="model_name", type=str, required=True)
+    parser.add_argument("-d", dest="deploy_type", type=str)
+    para_sets = parser.parse_args();
+
+    if para_sets.model_name == "all":
+        for model_name in trained_models:
+            deploy_and_test_model(getattr(models, model_name)(), model_name, para_sets.deploy_type)
+    else
+        deploy_and_test_model(getattr(models, para_sets.model_name)(), para_sets.model_name, para_sets.deploy_type)
 
 if __name__ == '__main__':
 	main()
