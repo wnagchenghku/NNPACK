@@ -4,11 +4,15 @@ import os
 import sys
 import logging
 import torchvision.models as models
+import cloud
+from cloudpickle import CloudPickler
 
 PYTORCH_WEIGHTS_RELATIVE_PATH = "pytorch_weights.pkl"
 PYTORCH_MODEL_RELATIVE_PATH = "pytorch_model.pkl"
 
 trained_models = ['resnet18', 'densenet201']
+
+logger = logging.getLogger(__name__)
 
 class ClipperException(Exception):
     """A generic exception indicating that Clipper encountered a problem."""
@@ -84,14 +88,12 @@ def build_model(name,
             image = "{reg}/{image}".format(
                 reg=container_registry, image=image)
         docker_client = docker.from_env()
-        self.logger.info(
-            "Building model Docker image with model data from {}".format(
-                model_data_path))
+        logger.info("Building model Docker image with model data from {}".format(model_data_path))
         image_result, build_logs = docker_client.images.build(
             fileobj=context_file, custom_context=True, tag=image)
         for b in build_logs:
             if 'stream' in b and b['stream'] != '\n':  #log build steps only
-                self.logger.info(b['stream'].rstrip())
+                logger.info(b['stream'].rstrip())
 
     return image
 
@@ -118,6 +120,7 @@ def save_python_function(name, func):
     # Set up serialization directory
     # serialization_dir = os.path.abspath(tempfile.mkdtemp(suffix='clipper'))
     serialization_dir = "model/{}/".format(name)
+    os.makedirs(serialization_dir)
     logger.info("Saving function to {}".format(serialization_dir))
 
     # Write out function serialization
