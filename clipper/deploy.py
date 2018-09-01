@@ -1,10 +1,13 @@
 import torch
+import argparse
 import docker
 import os
 import sys
 import logging
 import torchvision.models as models
 from cloudpickle import CloudPickler
+import tempfile
+import tarfile
 
 PYTORCH_WEIGHTS_RELATIVE_PATH = "pytorch_weights.pkl"
 PYTORCH_MODEL_RELATIVE_PATH = "pytorch_model.pkl"
@@ -37,7 +40,6 @@ def serialize_object(obj):
     return s.getvalue()
 
 def build_model(name,
-	            model_data_path,
                 base_image,
                 container_registry=None,
                 pkgs_to_install=None):
@@ -53,7 +55,7 @@ def build_model(name,
         # Create build context tarfile
         with tarfile.TarFile(
                 fileobj=context_file, mode="w") as context_tar:
-            context_tar.add(model_data_path)
+            # context_tar.add(model_data_path)
             # From https://stackoverflow.com/a/740854/814642
             try:
                 df_contents = StringIO(
@@ -86,6 +88,7 @@ def build_model(name,
         # Seek back to beginning of file for reading
         context_file.seek(0)
         image = "{name}".format(name=name)
+        print(image)
         if container_registry is not None:
             image = "{reg}/{image}".format(
                 reg=container_registry, image=image)
@@ -100,13 +103,12 @@ def build_model(name,
     return image
 
 def build_and_deploy_model(name,
-                           model_data_path,
                            base_image,
                            labels=None,
                            container_registry=None,
                            pkgs_to_install=None):
 
-    image = build_model(name, model_data_path, base_image,
+    image = build_model(name, base_image,
                         container_registry, pkgs_to_install)
 
 
@@ -139,7 +141,9 @@ def save_python_function(name, func):
 def deploy_pytorch_model(name,
                          func,
                          pytorch_model,
-                         deploy_type):
+                         deploy_type,
+			 base_image = "default",
+                         pkgs_to_install=None):
 
     try:
         if deploy_type == "container":
@@ -208,11 +212,11 @@ def deploy_and_test_model(model,
                           model_name,
                           deploy_type,
                           predict_fn=predict):
-    deploy_pytorch_model(model_name, predict_fn, model)
+    deploy_pytorch_model(model_name, predict_fn, model, deploy_type)
 
 def main():
 
-	parser = argparse.ArgumentParser("Deploy models");
+    parser = argparse.ArgumentParser("Deploy models");
     parser.add_argument("-m", dest="model_name", type=str, required=True)
     parser.add_argument("-d", dest="deploy_type", type=str)
     para_sets = parser.parse_args();
