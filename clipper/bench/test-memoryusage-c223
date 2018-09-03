@@ -32,17 +32,17 @@ do
 				# CPUs in which to allow execution (0-3, 0,1)
 				
 				# docker run -d --rm --net=none --cpuset-cpus="$inner" -v /root/persistent/scripts:/scripts fschmidt/micropython "/scripts/sleep.py" 1>/dev/null 2>&3
-				docker run -d --rm --net=none --cpus=1 -v /tmp/tmp.txt:$FILE "$model" 1>/dev/null 2>&3
+				docker run -d --rm --net=none --cpus=1 -v $FILE:/tmp/tmp.txt "$model" 1>/dev/null 2>&3
 			
 			done
 		else
 			FILE="/tmp/$MODEL-$CONT.txt"
 			exec 3<> $FILE
-			docker run -d --rm --net=none --cpus=1 -v /tmp/tmp.txt:$FILE "$MODEL" 1>/dev/null 2>&3
+			docker run -d --rm --net=none --cpus=1 -v $FILE:/tmp/tmp.txt "$MODEL" 1>/dev/null 2>&3
 		fi
 		echo "$CONT containers:" >&3
-		free >&3
-		df -T | head -n 16 >&3
+		# free >&3
+		# df -T | head -n 16 >&3
 		echo >&3
 		exec 3>&- # close the write file descriptor 3
 	done
