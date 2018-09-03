@@ -6,6 +6,8 @@ core_ini=1
 #iter=1000000
 iter=2800000
 
+model=$1
+
 # source /root/persistent/normal-distribution.input
 
 create_vm_json()
@@ -55,9 +57,9 @@ create_vm_domconf()
     fname=${4}
 
     cat > ${fname} <<EOF
-kernel = "xen-4.2.1/stubdom/mini-os-x86_32-c/${model}.gz"
+kernel = "/root/xen-4.2.1/stubdom/mini-os-x86_32-c/${model}.gz"
 memory = "512"
-name = "aws.${gid}"
+name = "${model}.${gid}"
 on_poweroff = "destroy"
 on_crash = "preserve"
 on_reboot = "preserve"
@@ -77,11 +79,14 @@ for i in $(seq 0 $(( ${vm_nr} - 1 ))) ; do
     #create_vm_json ${i} ${cpu} ${ip} ${mac} /tmp/aws.json
     #chaos --no-noxs create /tmp/aws.json 2>>create.log &
     #create_vm_domconf ${i} ${cpu} ${ip} ${mac} /tmp/aws.xen
-    create_vm_domconf ${i} ${cpu} ${model} /tmp/aws.xen
-    xl create /tmp/aws.xen
+    FILE="/tmp/$1-${i}.txt"
+    echo "" > $FILE
+    exec 3<> $FILE
+    create_vm_domconf ${i} ${cpu} $1 /tmp/$1-${i}.xen
+    xl create /tmp/$1-${i}.xen >&3
 
     #sleep ${interarrival[$i]}
-    j=$(echo "${interarrival[$i]} * 10" | bc)
-    sleep $j
+    #j=$(echo "${interarrival[$i]} * 10" | bc)
+    #sleep $j
 done
 
