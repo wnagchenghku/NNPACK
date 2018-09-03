@@ -15,7 +15,6 @@ do
 			for model in "${models[@]}"; do
 				FILE="/tmp/$model-$CONT.txt"
 				exec 3<> $FILE
-				echo "$CONT containers:" >&3
 
 				# --rm
 				# By default a container's file system persists even after the container exits.
@@ -39,7 +38,6 @@ do
 		else
 			FILE="/tmp/$MODEL-$CONT.txt"
 			exec 3<> $FILE
-			echo "$CONT containers:" >&3
 			docker run -d --rm --net=none --cpus=1 -v $FILE:/tmp/tmp.txt "$MODEL" 1>/dev/null 2>&3
 			# exec 3>&- # close the write file descriptor 3
 		fi
