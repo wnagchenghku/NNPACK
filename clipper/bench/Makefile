@@ -1,4 +1,5 @@
 
+# make -j
 ISPC=ispc
 ISPCFLAGS=-O2 --arch=x86 --target=sse2
 
@@ -10,7 +11,7 @@ dirs:
 	/bin/mkdir -p objs/
 
 clean:
-	/bin/rm -rf objs *~ simple *.o *.a
+	/bin/rm -rf objs *.o *.a
 
 
 obj := $(patsubst %.ispc, %.o, $(wildcard *.ispc))
