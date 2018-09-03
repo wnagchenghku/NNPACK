@@ -1,0 +1,55 @@
+#!/bin/bash
+
+ROUNDS=$1
+STOR=$2
+
+MODEL=$3
+declare -a models=("resnet18" "densenet201")
+
+exec 3<> /tmp/memory-c223-$STOR # open "/tmp/memory-c223-$STOR" for reading and writing on fd 3
+
+echo "0 containers:" >&3
+free >&3
+echo >&3
+
+for ((outer=0; outer<$ROUNDS; outer++))
+do
+	for ((inner=1; inner<=63; inner++))
+	do
+
+		if [[ MODEL =="all" ]]; then
+			for model in "${models[@]}"; do
+				echo "$model"
+
+				# --rm
+				# By default a container's file system persists even after the container exits.
+				# But if you are running short-term foreground processes, these container file systems can really pile up.
+				# If instead you’d like Docker to automatically clean up the container and remove the file system when the container exits,
+				# you can add the --rm flag
+
+				# -d
+				# Run container in background and print container ID
+
+				# --cpus
+				# Number of CPUs
+
+				# --cpuset-cpus
+				# CPUs in which to allow execution (0-3, 0,1)
+				
+				# docker run -d --rm --net=none --cpuset-cpus="$inner" -v /root/persistent/scripts:/scripts fschmidt/micropython "/scripts/sleep.py" 1>/dev/null 2>&3
+				docker run -d --rm --net=none --cpus=1 "$model" 1>/dev/null 2>&3
+			
+			done
+		else
+			docker run -d --rm --net=none --cpus=1 "$MODEL" 1>/dev/null 2>&3
+		fi
+		CONT=$((outer*63+inner))
+		echo "$CONT containers:" >&3
+		free >&3
+		df -T | head -n 16 >&3
+		echo >&3
+	done
+done
+
+exec 3>&- # close the write file descriptor 3
+
