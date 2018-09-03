@@ -1,6 +1,6 @@
 
 ISPC=ispc
-ISPCFLAGS=-O2 --arch=x86-64 --target=sse2
+ISPCFLAGS=-O2 --arch=x86 --target=sse2
 
 default: model.a
 
@@ -16,7 +16,6 @@ clean:
 obj := $(patsubst %.ispc, %.o, $(wildcard *.ispc))
 
 model.a: $(obj)
-	@echo $<
 	ar rcs -o $@ $(obj)
 
 %.o: %.ispc
