@@ -13,6 +13,7 @@ do
 		CONT=$((outer*63+inner))
 		if [ $MODEL == "all" ]; then
 			for model in "${models[@]}"; do
+				FILE="/tmp/$model-$CONT.txt"
 				exec 3<> $FILE
 
 				# --rm
@@ -35,7 +36,7 @@ do
 			
 			done
 		else
-			FILE="/tmp/$MODEL-$CONT"
+			FILE="/tmp/$MODEL-$CONT.txt"
 			exec 3<> $FILE
 			docker run -d --rm --net=none --cpus=1 -v /tmp/tmp.txt:$FILE "$MODEL" 1>/dev/null 2>&3
 		fi
