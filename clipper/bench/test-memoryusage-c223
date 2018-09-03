@@ -13,9 +13,9 @@ do
 		CONT=$((outer*63+inner))
 		if [ $MODEL == "all" ]; then
 			for model in "${models[@]}"; do
-				FILE="/tmp/$model-$CONT.txt"
-				exec 3<> $FILE
-
+				CONTAINER_OUTPUT="/tmp/$model-$CONT-container.txt"
+				DOCKER_OUTPUT="/tmp/$model-$CONT-docker.txt"
+				exec 3<> $DOCKER_OUTPUT
 				# --rm
 				# By default a container's file system persists even after the container exits.
 				# But if you are running short-term foreground processes, these container file systems can really pile up.
@@ -32,13 +32,14 @@ do
 				# CPUs in which to allow execution (0-3, 0,1)
 				
 				# docker run -d --rm --net=none --cpuset-cpus="$inner" -v /root/persistent/scripts:/scripts fschmidt/micropython "/scripts/sleep.py" 1>/dev/null 2>&3
-				/root/docker-instrumented/1.13.0/binary-client/docker run -d --rm --net=none --cpus=1 -v $FILE:/tmp/tmp.txt "$model" 1>/dev/null 2>&3
+				/root/docker-instrumented/bundles/1.13.0/binary-client/docker run -d --rm --net=none --cpus=1 -v $CONTAINER_OUTPUT:/tmp/tmp.txt "$model" 1>/dev/null 2>&3
 				# exec 3>&- # close the write file descriptor 3
 			done
 		else
-			FILE="/tmp/$MODEL-$CONT.txt"
-			exec 3<> $FILE
-			/root/docker-instrumented/1.13.0/binary-client/docker run -d --rm --net=none --cpus=1 -v $FILE:/tmp/tmp.txt "$MODEL" 1>/dev/null 2>&3
+			CONTAINER_OUTPUT="/tmp/$MODEL-$CONT-container.txt"
+			DOCKER_OUTPUT="/tmp/$MODEL-$CONT-docker.txt"
+			exec 3<> $DOCKER_OUTPUT
+			/root/docker-instrumented/bundles/1.13.0/binary-client/docker run -d --rm --net=none --cpus=1 -v $CONTAINER_OUTPUT:/tmp/tmp.txt "$MODEL" 1>/dev/null 2>&3
 			# exec 3>&- # close the write file descriptor 3
 		fi
 	done
