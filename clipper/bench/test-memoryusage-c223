@@ -14,8 +14,9 @@ do
 		if [ $MODEL == "all" ]; then
 			for model in "${models[@]}"; do
 				CONTAINER_OUTPUT="/tmp/$model-$CONT-container.txt"
-				touch $CONTAINER_OUTPUT
+				echo "" > $CONTAINER_OUTPUT
 				DOCKER_OUTPUT="/tmp/$model-$CONT-docker.txt"
+				echo "" > $DOCKER_OUTPUT
 				exec 3<> $DOCKER_OUTPUT
 				# --rm
 				# By default a container's file system persists even after the container exits.
@@ -38,8 +39,9 @@ do
 			done
 		else
 			CONTAINER_OUTPUT="/tmp/$MODEL-$CONT-container.txt"
-			touch $CONTAINER_OUTPUT
+			echo "" > $CONTAINER_OUTPUT
 			DOCKER_OUTPUT="/tmp/$MODEL-$CONT-docker.txt"
+			echo "" > $DOCKER_OUTPUT
 			exec 3<> $DOCKER_OUTPUT
 			/root/docker-instrumented/bundles/1.13.0/binary-client/docker run -d --rm --net=none --cpus=1 -v $CONTAINER_OUTPUT:/tmp/tmp.txt "$MODEL" 1>/dev/null 2>&3
 			# exec 3>&- # close the write file descriptor 3
