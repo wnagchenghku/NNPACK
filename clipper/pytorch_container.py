@@ -93,6 +93,8 @@ if __name__ == "__main__":
     parser.add_argument('-m', type=str, dest="model_name", action="store", required=True)
     args = parser.parse_args()
 
+    f = open('/tmp/tmp.txt', 'w')
+
     load_start = datetime.datetime.now()
     try:
         # model = PyTorchContainer(rpc_service.get_model_path(),
@@ -111,5 +113,6 @@ if __name__ == "__main__":
     model.predict_floats(torch.autograd.Variable(inputs))
     predict_end = datetime.datetime.now()
 
-    print("model loading takes %d s, %d us\n" % ((load_end - load_start).seconds, (load_end - load_start).microseconds))
-    print("prediction takes %d s, %d us\n" % ((predict_end - predict_start).seconds, (predict_end - predict_start).microseconds))
+    f.write("model loading takes %d s, %d us\n" % ((load_end - load_start).seconds, (load_end - load_start).microseconds))
+    f.write("prediction takes %d s, %d us\n" % ((predict_end - predict_start).seconds, (predict_end - predict_start).microseconds))
+    f.close()
