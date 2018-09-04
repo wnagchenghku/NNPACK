@@ -17,7 +17,7 @@ subprocess.Popen(["xl", "unpause", sys.argv[1]]) # start in background
 while True:
     line = cdev.readline()
     print "%s" % line
-    if line == 'Dummy main: start_info=00049440\r\n':
+    if line == 'Pytorch unikernel is up and running\r\n':
         ts_end = time.time()
         break
     if line[:11] == 'Page fault ' or line[:19] == 'Segmentation fault ' or line[:25] == 'General protection fault ':
@@ -35,12 +35,12 @@ ts_diff = ts_end - ts_start
 print "Booted domain with ID %s in %s seconds" % (sys.argv[1], str(ts_diff))
 
 # output rest of boot process (trace boot has to be enabled!!!)
-while True:
-    line = cdev.readline()
-    if not line or line == '***\r\n':
-        break
-    sys.stdout.write(line)
-    continue
+# while True:
+#     line = cdev.readline()
+#     if not line or line == '***\r\n':
+#         break
+#     sys.stdout.write(line)
+#     continue
 
 # clean-up
 cdev.close()
