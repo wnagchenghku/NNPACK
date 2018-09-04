@@ -3,6 +3,7 @@ DOMAINNAME=Mini-OS
 
 LOG_FILE="/tmp/tmp.txt"
 exec 3<> $LOG_FILE
+> $LOG_FILE
 
 xl create -p domain_config >&3
 
