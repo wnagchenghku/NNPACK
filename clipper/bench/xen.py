@@ -16,8 +16,8 @@ subprocess.Popen(["xl", "unpause", sys.argv[1]]) # start in background
 # read guests output
 while True:
     line = cdev.readline()
-    #print "%s" % line
-    if line == '*** MiniCache is up and running ***\r\n':
+    print "%s" % line
+    if line == 'Dummy main: start_info=00049440\r\n':
         ts_end = time.time()
         break
     if line[:11] == 'Page fault ' or line[:19] == 'Segmentation fault ' or line[:25] == 'General protection fault ':
