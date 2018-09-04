@@ -32,8 +32,9 @@ if crashed == 1:
     exit(1)
 
 ts_diff = ts_end - ts_start
-print "Booted domain with ID %s in %s seconds" % (sys.argv[1], str(ts_diff))
-
+# print "Booted domain with ID %s in %s seconds" % (sys.argv[1], str(ts_diff))
+with open(sys.argv[3], "a") as f:
+    f.write("Booted domain with ID %s in %s seconds" % (sys.argv[1], str(ts_diff)))
 # output rest of boot process (trace boot has to be enabled!!!)
 # while True:
 #     line = cdev.readline()
