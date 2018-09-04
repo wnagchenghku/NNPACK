@@ -1,6 +1,14 @@
 
 # make -j
 
+# define the C compiler to use
+CC = gcc
+
+# define any compile-time flags
+CFLAGS = -m32 -Wl,-hash-style=sysv -fno-stack-protector -fPIC -nostdlib -shared
+
+INCLUDES = -I/root/NNPACK/include/ -I/root/NNPACK/deps/pthreadpool/include
+
 default: so
 
 .PHONY: dirs clean
@@ -17,4 +25,4 @@ obj := $(patsubst %.c, %.so, $(wildcard *.c))
 so: $(obj)
 
 %.so: %.c
-	gcc -m32 -Wl,-hash-style=sysv -fno-stack-protector -fPIC -nostdlib -shared $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDES) $< -o $@
