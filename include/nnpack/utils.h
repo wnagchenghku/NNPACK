@@ -41,3 +41,12 @@ static inline size_t divide_round_up(size_t dividend, size_t divisor) {
 		return dividend / divisor + 1;
 	}
 }
+
+static void * mini_memset(void * s,int c,size_t count)
+{
+	char *xs = (char *) s; 
+	while (count--)
+		*xs++ = c;
+
+	return s;
+}
