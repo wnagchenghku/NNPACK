@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include <pthreadpool.h>
+#include "../deps/pthreadpool/include/pthreadpool.h"
 
 #ifdef __cplusplus
 extern "C" {
