@@ -93,34 +93,35 @@ inline static double read_timer() {
 	}
 
 inline static void* allocate_memory(size_t memory_size) {
-#if defined(__linux__)
-	#if !defined(__ANDROID__)
-		/* Try to use large page TLB */
-		void* memory_block = mmap(NULL, memory_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE | MAP_HUGETLB, -1, 0);
-	#else
-		void* memory_block = MAP_FAILED;
-	#endif
-	if (memory_block == MAP_FAILED) {
-		/* Fallback to standard pages */
-		memory_block = mmap(NULL, memory_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE, -1, 0);
-		if (memory_block == MAP_FAILED) {
-			return NULL;
-		}
-	}
-	return memory_block;
-#else
-	void* memory_block = NULL;
-	int allocation_result = posix_memalign(&memory_block, 64, memory_size);
-	return (allocation_result == 0) ? memory_block : NULL;
-#endif
+// #if defined(__linux__)
+// 	#if !defined(__ANDROID__)
+// 		/* Try to use large page TLB */
+// 		void* memory_block = mmap(NULL, memory_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE | MAP_HUGETLB, -1, 0);
+// 	#else
+// 		void* memory_block = MAP_FAILED;
+// 	#endif
+// 	if (memory_block == MAP_FAILED) {
+// 		/* Fallback to standard pages */
+// 		memory_block = mmap(NULL, memory_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE, -1, 0);
+// 		if (memory_block == MAP_FAILED) {
+// 			return NULL;
+// 		}
+// 	}
+// 	return memory_block;
+// #else
+// 	void* memory_block = NULL;
+// 	int allocation_result = posix_memalign(&memory_block, 64, memory_size);
+// 	return (allocation_result == 0) ? memory_block : NULL;
+// #endif
+	return NULL;
 }
 
 inline static void release_memory(void* memory_block, size_t memory_size) {
-#if defined(__linux__)
-	if (memory_block != NULL) {
-		munmap(memory_block, memory_size);
-	}
-#else
-	free(memory_block);
-#endif
+// #if defined(__linux__)
+// 	if (memory_block != NULL) {
+// 		munmap(memory_block, memory_size);
+// 	}
+// #else
+// 	free(memory_block);
+// #endif
 }
