@@ -42,7 +42,7 @@ static inline size_t divide_round_up(size_t dividend, size_t divisor) {
 	}
 }
 
-static void * mini_memset(void * s,int c,size_t count)
+static inline void * mini_memset(void * s,int c,size_t count)
 {
 	char *xs = (char *) s; 
 	while (count--)
