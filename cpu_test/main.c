@@ -7,6 +7,9 @@
 
 void convolution()
 {
+	sleep(2);
+	char memoryBuffer[16384 * 500];
+	size_t memorySize = 16384 * 500;
 	enum nnp_status init_status = nnp_initialize(&memset, &malloc, &free);
 	if (init_status != nnp_status_success) {
 		printf("NNPACK initialization failed: error code %d\n", init_status);
@@ -47,7 +50,7 @@ void convolution()
 			input_channels, output_channels,
 			input_size, input_padding, kernel_size, output_subsampling,
 			input, kernel, bias, output,
-			NULL, NULL,
+			memoryBuffer, &memorySize,
 			nnp_activation_identity, NULL,
 			NULL,
 			NULL);
