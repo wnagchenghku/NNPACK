@@ -1,5 +1,13 @@
 1. pytorch v0.3.1
 2. NNPACK checkout f824d521126fea15d01cb1da5cb9dab94602b525 (to avoid using libcpuinfo.a)
+   Note: to use the latest NNPACK, add 
+        libs = [
+            os.path.join(lib, 'libnnpack.a'),
+            os.path.join(lib, 'libpthreadpool.a'),
+            os.path.join(lib, 'libcpuinfo.a'),
+            os.path.join(lib, 'libclog.a')
+        ]
+
 3, cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DNNPACK_BACKEND="psimd"
 4. cp libnnpack.a and libpthreadpool.a to NNPACK/lib
 5. export NNPACK_DIR=
