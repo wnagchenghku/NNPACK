@@ -409,7 +409,7 @@ static void init_hwinfo(void) {
 	nnp_hwinfo.blocking.l4 = nnp_hwinfo.cache.l4.size;
 	if (nnp_hwinfo.cache.l1.size && nnp_hwinfo.cache.l2.size && nnp_hwinfo.cache.l3.size) {
 		#if NNP_BACKEND_X86_64
-			if (cpuinfo_has_x86_avx2() && cpuinfo_has_x86_fma3()) {
+			// if (cpuinfo_has_x86_avx2() && cpuinfo_has_x86_fma3()) {
 				nnp_hwinfo.simd_width = 8;
 				nnp_hwinfo.transforms.fft8x8_with_offset_and_store = (nnp_transform_2d_with_offset) nnp_fft8x8_with_offset_and_store__avx2;
 				nnp_hwinfo.transforms.fft8x8_with_offset_and_stream = (nnp_transform_2d_with_offset) nnp_fft8x8_with_offset_and_stream__avx2;
@@ -488,7 +488,7 @@ static void init_hwinfo(void) {
 #endif /* !NNP_INFERENCE_ONLY */
 				};
 				nnp_hwinfo.supported = true;
-			}
+			// }
 		#elif NNP_BACKEND_PSIMD
 			nnp_hwinfo.simd_width = 4;
 			nnp_hwinfo.transforms.fft8x8_with_offset_and_store = (nnp_transform_2d_with_offset) nnp_fft8x8_with_offset__psimd;
