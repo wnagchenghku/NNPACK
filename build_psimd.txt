@@ -1,3 +1,5 @@
+cmake .. -DNNPACK_LIBRARY_TYPE="shared" -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DNNPACK_BACKEND="psimd" -DNNPACK_INFERENCE_ONLY=ON
+
 # Avoid memset in 2d-fourier-16x16.c (change -O3 to -O2)
 
 /usr/bin/cc  -DCPUINFO_SUPPORTED_PLATFORM=1 -DNNP_BACKEND_PSIMD=1 -DNNP_CONVOLUTION_ONLY=0 -DNNP_INFERENCE_ONLY=1 -Dnnpack_EXPORTS -I/root/test/NNPACK/include -I/root/test/NNPACK/src -I/root/test/NNPACK/deps/cpuinfo/include -I/root/test/NNPACK/deps/pthreadpool/include -I/root/test/NNPACK/deps/fxdiv/include -I/root/test/NNPACK/deps/psimd/include -I/root/test/NNPACK/deps/fp16/include  -fPIC   -pthread -std=gnu99  -O2 -ffast-math  -o CMakeFiles/nnpack.dir/src/psimd/2d-fourier-16x16.c.o   -c /root/test/NNPACK/src/psimd/2d-fourier-16x16.c
