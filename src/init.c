@@ -775,9 +775,9 @@ static void init_hwinfo(void) {
 }
 
 enum nnp_status nnp_initialize(void) {
-	if (!cpuinfo_initialize()) {
-		return nnp_status_out_of_memory;
-	}
+	// if (!cpuinfo_initialize()) {
+	// 	return nnp_status_out_of_memory;
+	// }
 	// pthread_once(&hwinfo_init_control, &init_hwinfo);
 	init_hwinfo();
 	if (nnp_hwinfo.supported) {
@@ -788,6 +788,6 @@ enum nnp_status nnp_initialize(void) {
 }
 
 enum nnp_status nnp_deinitialize(void) {
-	cpuinfo_deinitialize();
+	// cpuinfo_deinitialize();
 	return nnp_status_success;
 }
