@@ -13,11 +13,31 @@
 #include <nnpack/relu.h>
 #include <nnpack/softmax.h>
 
+#include <cpuid.h>
+
 struct hardware_info nnp_hwinfo = { };
 // static pthread_once_t hwinfo_init_control = PTHREAD_ONCE_INIT;
 
-
 #if (CPUINFO_ARCH_X86 || CPUINFO_ARCH_X86_64) && !defined(__ANDROID__)
+
+	#ifndef __native_client__
+		/*
+		 * This instruction may be not supported by Native Client validator, make sure it doesn't appear in the binary
+		 */
+		static inline uint64_t xgetbv(uint32_t ext_ctrl_reg) {
+			uint32_t lo, hi;
+			asm(".byte 0x0F, 0x01, 0xD0" : "=a" (lo), "=d" (hi) : "c" (ext_ctrl_reg));
+			return (((uint64_t) hi) << 32) | (uint64_t) lo;
+		}
+	#endif
+
+	struct cpu_info {
+		uint32_t eax;
+		uint32_t ebx;
+		uint32_t ecx;
+		uint32_t edx;
+	};
+
 	static void init_x86_hwinfo(void) {
 /*		const struct cpuinfo_cache* l1d = cpuinfo_get_l1d_cache(0);
 		if (l1d != NULL) {
