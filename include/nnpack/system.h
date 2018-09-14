@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <malloc.h>
 
 #if defined(__linux__) || defined(__native_client__)
 	#include <time.h>
