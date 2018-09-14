@@ -19,8 +19,8 @@
 inline static double read_timer() {
 #if defined(__linux__) || defined(__native_client__)
 	struct timespec ts;
-	int result = clock_gettime(CLOCK_MONOTONIC, &ts);
-	assert(result == 0);
+	//int result = clock_gettime(CLOCK_MONOTONIC, &ts);
+	//assert(result == 0);
 	return ((double) ts.tv_sec) + ((double) ts.tv_nsec) * 1.0e-9;
 #elif defined(__MACH__)
 	static mach_timebase_info_data_t timebase_info;
@@ -94,19 +94,20 @@ inline static double read_timer() {
 
 inline static void* allocate_memory(size_t memory_size) {
 #if defined(__linux__)
-	#if !defined(__ANDROID__)
+	//#if !defined(__ANDROID__)
 		/* Try to use large page TLB */
-		void* memory_block = mmap(NULL, memory_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE | MAP_HUGETLB, -1, 0);
-	#else
-		void* memory_block = MAP_FAILED;
-	#endif
-	if (memory_block == MAP_FAILED) {
-		/* Fallback to standard pages */
-		memory_block = mmap(NULL, memory_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE, -1, 0);
-		if (memory_block == MAP_FAILED) {
-			return NULL;
-		}
-	}
+	//	void* memory_block = mmap(NULL, memory_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE | MAP_HUGETLB, -1, 0);
+	//#else
+	//	void* memory_block = MAP_FAILED;
+	//#endif
+	//if (memory_block == MAP_FAILED) {
+	//	/* Fallback to standard pages */
+	//	memory_block = mmap(NULL, memory_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE, -1, 0);
+	//	if (memory_block == MAP_FAILED) {
+	//		return NULL;
+	//	}
+	//}
+	void* memory_block = memalign(64, memory_size);
 	return memory_block;
 #else
 	void* memory_block = NULL;
@@ -117,9 +118,10 @@ inline static void* allocate_memory(size_t memory_size) {
 
 inline static void release_memory(void* memory_block, size_t memory_size) {
 #if defined(__linux__)
-	if (memory_block != NULL) {
-		munmap(memory_block, memory_size);
-	}
+	//if (memory_block != NULL) {
+	//	munmap(memory_block, memory_size);
+	//}
+	free(memory_block);
 #else
 	free(memory_block);
 #endif
