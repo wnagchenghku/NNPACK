@@ -9,6 +9,7 @@
 #include <psimd.h>
 #include <psimd/exp.h>
 
+float expf_mini(float x) {return x;}
 
 static float max__scalar(size_t n, const float v[restrict static n]) {
 	float max_v = *v++;
@@ -54,7 +55,7 @@ static psimd_f32 max__psimd(size_t n, const float v[restrict static n]) {
 static float sum_exp_minus_c__scalar(size_t n, const float v[restrict static n], float c) {
 	float sum = 0.0f;
 	do {
-		sum += expf(*v++ - c);
+		sum += expf_mini(*v++ - c);
 	} while (--n);
 	return sum;
 }
@@ -91,7 +92,7 @@ static float sum_exp_minus_c__psimd(size_t n, const float v[restrict static n], 
 
 static void scaled_exp_minus_c__scalar(size_t n, const float x[static n], float y[static n], float scale, float c) {
 	do {
-		*y++ = scale * expf(*x++ - c);
+		*y++ = scale * expf_mini(*x++ - c);
 	} while (--n);
 }
 
